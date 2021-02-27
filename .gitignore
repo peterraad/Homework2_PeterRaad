@@ -108,3 +108,6 @@ dist
 
 # serverkey
 serversecret.txt
+
+# environment file
+.env
