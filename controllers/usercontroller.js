@@ -16,7 +16,7 @@ const doActionThatMightFailValidation = async (request, response, action) => {
     );
   }
 };
-const GetAllUser = async (request, response) => {
+const GetAllUsers = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     // if this part throws an exception where it doesn't find the object specified o
     // r something then it will go to the funcion above and evaluate
@@ -52,17 +52,17 @@ const DeleteAllUsers = async (request, response) => {
 const DeleteSingleUser = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     response.sendStatus((await User.deleteOne({
-      ssn: request.params.socialsecurity,
+      socialsecurity: request.params.socialsecurity,
     })).deletedCount > 0 ? 200 : 404);
   });
 };
 const UpdateUserField = async (request, response) => {
-  const { ssn } = request.params;
+  const { socialsecurity } = request.params;
   const user = request.body;
   delete user.socialsecurity;
   await doActionThatMightFailValidation(request, response, async () => {
     const patchResult = await User
-      .findOneAndUpdate({ ssn }, user, {
+      .findOneAndUpdate({ socialsecurity }, user, {
         new: true,
       })
       .select('-_id -__v');
@@ -74,11 +74,11 @@ const UpdateUserField = async (request, response) => {
   });
 };
 const UpdateUserEntity = async (request, response) => {
-  const { ssn } = request.params;
+  const { socialsecurity } = request.params;
   const user = request.body;
-  user.socialsecurity = ssn;
+  user.socialsecurity = socialsecurity;
   await doActionThatMightFailValidation(request, response, async () => {
-    await User.findOneAndReplace({ ssn }, user, {
+    await User.findOneAndReplace({ socialsecurity }, user, {
       upsert: true,
     });
     response.sendStatus(200);
@@ -86,7 +86,7 @@ const UpdateUserEntity = async (request, response) => {
 };
 
 module.exports = {
-  GetAllUser,
+  GetAllUsers,
   GetSingleUser,
   CreateUser,
   DeleteAllUsers,

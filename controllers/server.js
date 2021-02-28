@@ -11,8 +11,8 @@ const app = Express();
 
 app.use(BodyParser.json());
 
-app.use(ProductRoutes);
-app.use(UserRoutes);
+app.use('/products', ProductRoutes);
+app.use('/users', UserRoutes);
 (async () => {
   // environment variable set in configuration of the WS environment
   await Mongoose.connect(process.env.SERVER_SECRET, {
