@@ -30,7 +30,7 @@ const GetAllUser = async (request, response) => {
 };
 const GetSingleUser = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await User.findOne({ sku: request.params.sku }).select('-_id -__v');
+    const getResult = await User.findOne({ socialsecurity: request.params.socialsecurity }).select('-_id -__v');
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -52,17 +52,17 @@ const DeleteAllUsers = async (request, response) => {
 const DeleteSingleUser = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     response.sendStatus((await User.deleteOne({
-      sku: request.params.sku,
+      ssn: request.params.socialsecurity,
     })).deletedCount > 0 ? 200 : 404);
   });
 };
 const UpdateUserField = async (request, response) => {
-  const { sku } = request.params;
-  const product = request.body;
-  delete product.sku;
+  const { ssn } = request.params;
+  const user = request.body;
+  delete user.socialsecurity;
   await doActionThatMightFailValidation(request, response, async () => {
     const patchResult = await User
-      .findOneAndUpdate({ sku }, product, {
+      .findOneAndUpdate({ ssn }, user, {
         new: true,
       })
       .select('-_id -__v');
@@ -74,11 +74,11 @@ const UpdateUserField = async (request, response) => {
   });
 };
 const UpdateUserEntity = async (request, response) => {
-  const { sku } = request.params;
-  const product = request.body;
-  product.sku = sku;
+  const { ssn } = request.params;
+  const user = request.body;
+  user.socialsecurity = ssn;
   await doActionThatMightFailValidation(request, response, async () => {
-    await User.findOneAndReplace({ sku }, product, {
+    await User.findOneAndReplace({ ssn }, user, {
       upsert: true,
     });
     response.sendStatus(200);
