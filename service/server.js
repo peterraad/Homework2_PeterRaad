@@ -1,8 +1,7 @@
+require('dotenv').config();
 const Express = require('express');
 const BodyParser = require('body-parser');
 const Mongoose = require('mongoose');
-
-// using require to pull other modules - this imports the product as an object
 
 const ProductRoutes = require('../routes/productroutes');
 const UserRoutes = require('../routes/userroutes');

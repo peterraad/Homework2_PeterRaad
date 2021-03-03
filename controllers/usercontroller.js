@@ -46,7 +46,8 @@ const CreateUser = async (request, response) => {
 };
 const DeleteAllUsers = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus((await User.deleteMany(request.query)).deletedCount > 0 ? 200 : 404);
+    response.sendStatus((await User.deleteMany(request.query)).deletedCount > 0 ? 200 : 404); // this 200 or 404 is repeated
+    // on 56 so we need to pull this in a common function and have both controllers use this
   });
 };
 const DeleteSingleUser = async (request, response) => {

@@ -46,14 +46,14 @@ const CreateProduct = async (request, response) => {
 };
 const DeleteAllProducts = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus((await Product.deleteMany(request.query)).deletedCount > 0 ? 200 : 404);
+    response.sendStatus((await Product.deleteMany(request.query)).deletedCount > 0 ? 200 : 404); // repeated
   });
 };
 const DeleteSingleProduct = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     response.sendStatus((await Product.deleteOne({
       sku: request.params.sku,
-    })).deletedCount > 0 ? 200 : 404);
+    })).deletedCount > 0 ? 200 : 404); // repeated
   });
 };
 const UpdateProductField = async (request, response) => {
