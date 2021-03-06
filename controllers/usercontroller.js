@@ -1,5 +1,4 @@
 // get, update, delete, create
-const User = require('../models/user');
 const UserService = require('../service/user.service');
 
 const doActionThatMightFailValidation = async (request, response, action) => {
@@ -19,19 +18,9 @@ const doActionThatMightFailValidation = async (request, response, action) => {
 };
 
 const deleteValidator = (action) => (action.deletedCount > 0 ? 200 : 404);
-// function deleteValidatorfunc(count) {
-//   return count > 0 ? 200 : 404;
-//   // return User.deleteMany(query);
 
 const GetAllUsers = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    // if this part throws an exception where it doesn't find the object specified o
-    // r something then it will go to the function above and evaluate
-    // whether the response should be 4 or 500
-    // request.query is the search query the user types in for the request
-    // '-_id -__v' this ignores a bunch of stuff except for the id
-    // we do not want the await inside the response.json in this controller
-    // we want it in a separate service
     response.json(await UserService.getAllUsersService(request.query));
   });
 };
@@ -59,19 +48,18 @@ const DeleteAllUsers = async (request, response) => {
 
 const DeleteSingleUser = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(deleteValidator(await UserService.DeleteSingleUserService(request.params.socialsecurity)));
+    response.sendStatus(deleteValidator(await UserService.DeleteSingleUserService(
+      request.params.socialsecurity,
+    )));
   });
 };
+
 const UpdateUserField = async (request, response) => {
   const { socialsecurity } = request.params;
   const user = request.body;
   delete user.socialsecurity;
   await doActionThatMightFailValidation(request, response, async () => {
-    const patchResult = await User
-      .findOneAndUpdate({ socialsecurity }, user, {
-        new: true,
-      })
-      .select('-_id -__v');
+    const patchResult = await UserService.UpdateUserFieldService(socialsecurity, user);
     if (patchResult != null) {
       response.json(patchResult);
     } else {
@@ -79,14 +67,13 @@ const UpdateUserField = async (request, response) => {
     }
   });
 };
+
 const UpdateUserEntity = async (request, response) => {
   const { socialsecurity } = request.params;
   const user = request.body;
   user.socialsecurity = socialsecurity;
   await doActionThatMightFailValidation(request, response, async () => {
-    await User.findOneAndReplace({ socialsecurity }, user, {
-      upsert: true,
-    });
+    await UserService.UpdateUserEntityService(socialsecurity, user);
     response.sendStatus(200);
   });
 };

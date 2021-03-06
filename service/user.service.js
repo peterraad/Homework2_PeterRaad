@@ -24,15 +24,24 @@ const DeleteAllUsersService = async (query) => User.deleteMany(query);
 
 const DeleteSingleUserService = async (socialsecurity) => User.deleteOne({ socialsecurity });
 
-const UpdateUserFieldService = async (request, { socialsecurity }, user) => {
-  await User.findOneAndUpdate({ socialsecurity }, user, {
+const UpdateUserFieldService = async (socialsecurity, user) => User.findOneAndUpdate(
+  { socialsecurity }, user,
+  {
     new: true,
-  });
-};
+  },
+).select('-_id -__v');
+
+const UpdateUserEntityService = async (socialsecurity, user) => User.findOneAndReplace(
+  { socialsecurity }, user, {
+    upsert: true,
+  },
+);
 module.exports = {
   getAllUsersService,
   GetSingleUserService,
   CreateSingleUserService,
   DeleteAllUsersService,
   DeleteSingleUserService,
+  UpdateUserFieldService,
+  UpdateUserEntityService,
 };
