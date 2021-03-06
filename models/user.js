@@ -15,6 +15,8 @@ module.exports = Mongoose.model('User', new Mongoose.Schema({
     unique: true,
     match: [/^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$/, 'Please enter a valid social security number'],
   },
+  address: { type: String },
+  phone: { type: String },
 }, {
   // getters are using the schema to transform the schema properly
   // virtuals is metadata we do not need

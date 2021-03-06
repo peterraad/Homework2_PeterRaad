@@ -13,7 +13,6 @@ app.use(BodyParser.json());
 app.use('/products', ProductRoutes);
 app.use('/users', UserRoutes);
 (async () => {
-  // environment variable set in configuration of the WS environment
   await Mongoose.connect(process.env.SERVER_SECRET, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -22,5 +21,3 @@ app.use('/users', UserRoutes);
   });
   app.listen(process.env.PORT);
 })();
-
-// applies all the product routes here
