@@ -59,9 +59,7 @@ const DeleteAllUsers = async (request, response) => {
 
 const DeleteSingleUser = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(UserService.DeleteSingleUserService({
-      socialsecurity: request.params.socialsecurity,
-    }));
+    response.sendStatus(deleteValidator(await UserService.DeleteSingleUserService(request.params.socialsecurity)));
   });
 };
 const UpdateUserField = async (request, response) => {

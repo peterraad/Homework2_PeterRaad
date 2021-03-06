@@ -22,7 +22,13 @@ const CreateSingleUserService = async (body) => {
 
 const DeleteAllUsersService = async (query) => User.deleteMany(query);
 
-const DeleteSingleUserService = async (socialsecuriity) => User.deleteOne({ socialsecuriity });
+const DeleteSingleUserService = async (socialsecurity) => User.deleteOne({ socialsecurity });
+
+const UpdateUserFieldService = async (request, { socialsecurity }, user) => {
+  await User.findOneAndUpdate({ socialsecurity }, user, {
+    new: true,
+  });
+};
 module.exports = {
   getAllUsersService,
   GetSingleUserService,
