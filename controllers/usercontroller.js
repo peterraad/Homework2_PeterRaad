@@ -1,7 +1,7 @@
 // get, update, delete, create
 const UserService = require('../service/user.service');
 
-const doActionThatMightFailValidation = async (request, response, action) => {
+const DoActionThatMightFailValidation = async (request, response, action) => {
   try {
     await action();
   } catch (e) {
@@ -14,15 +14,15 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   }
 };
 
-const deleteValidator = (action) => (action.deletedCount > 0 ? 200 : 404);
+const DeleteValidator = (action) => (action.deletedCount > 0 ? 200 : 404);
 
 const GetAllUsers = async (request, response) => {
-  await doActionThatMightFailValidation(request, response, async () => {
-    response.json(await UserService.getAllUsersService(request.query));
+  await DoActionThatMightFailValidation(request, response, async () => {
+    response.json(await UserService.GetAllUsersService(request.query));
   });
 };
 const GetSingleUser = async (request, response) => {
-  await doActionThatMightFailValidation(request, response, async () => {
+  await DoActionThatMightFailValidation(request, response, async () => {
     const getResult = await UserService.GetSingleUserService(request.params.socialsecurity);
     if (getResult != null) {
       response.json(getResult);
@@ -32,20 +32,20 @@ const GetSingleUser = async (request, response) => {
   });
 };
 const CreateUser = async (request, response) => {
-  await doActionThatMightFailValidation(request, response, async () => {
+  await DoActionThatMightFailValidation(request, response, async () => {
     await UserService.CreateSingleUserService(request.body);
     response.sendStatus(201);
   });
 };
 const DeleteAllUsers = async (request, response) => {
-  await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(deleteValidator(await UserService.DeleteAllUsersService(request.query)));
+  await DoActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus(DeleteValidator(await UserService.DeleteAllUsersService(request.query)));
   });
 };
 
 const DeleteSingleUser = async (request, response) => {
-  await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(deleteValidator(await UserService.DeleteSingleUserService(
+  await DoActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus(DeleteValidator(await UserService.DeleteSingleUserService(
       request.params.socialsecurity,
     )));
   });
@@ -55,7 +55,7 @@ const UpdateUserField = async (request, response) => {
   const { socialsecurity } = request.params;
   const user = request.body;
   delete user.socialsecurity;
-  await doActionThatMightFailValidation(request, response, async () => {
+  await DoActionThatMightFailValidation(request, response, async () => {
     const patchResult = await UserService.UpdateUserFieldService(socialsecurity, user);
     if (patchResult != null) {
       response.json(patchResult);
@@ -69,7 +69,7 @@ const UpdateUserEntity = async (request, response) => {
   const { socialsecurity } = request.params;
   const user = request.body;
   user.socialsecurity = socialsecurity;
-  await doActionThatMightFailValidation(request, response, async () => {
+  await DoActionThatMightFailValidation(request, response, async () => {
     await UserService.UpdateUserEntityService(socialsecurity, user);
     response.sendStatus(200);
   });
@@ -83,5 +83,4 @@ module.exports = {
   DeleteSingleUser,
   UpdateUserEntity,
   UpdateUserField,
-  deleteValidator,
 };

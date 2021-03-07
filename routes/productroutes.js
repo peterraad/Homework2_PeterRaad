@@ -1,8 +1,11 @@
-const express = require('express');
+const Express = require('express');
+const BodyParser = require('body-parser');
+
 const ProductController = require('../controllers/productcontroller');
 
-const router = express.Router();
+const router = Express.Router();
 
+router.use(BodyParser.json());
 router.get('/', ProductController.GetAllProducts);
 router.get('/:sku', ProductController.GetSingleProduct);
 router.post('/', ProductController.CreateProduct);

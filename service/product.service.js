@@ -1,6 +1,6 @@
 const Product = require('../models/product');
 
-const getAllProductsService = async (query) => {
+const GetAllProductsService = async (query) => {
   try {
     return await Product.find(query).select('-_id -__v');
   } catch (e) {
@@ -37,7 +37,7 @@ const UpdateProductEntityService = async (sku, product) => Product.findOneAndRep
   },
 );
 module.exports = {
-  getAllProductsService,
+  GetAllProductsService,
   GetSingleProductService,
   CreateSingleProductService,
   DeleteAllProductsService,

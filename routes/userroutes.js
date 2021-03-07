@@ -1,8 +1,8 @@
-const express = require('express');
+const Express = require('express');
 const BodyParser = require('body-parser');
 const UserController = require('../controllers/usercontroller');
 
-const router = express.Router();
+const router = Express.Router();
 router.use(BodyParser.json());
 router.get('/', UserController.GetAllUsers);
 router.get('/:socialsecurity', UserController.GetSingleUser);
