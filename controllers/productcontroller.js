@@ -1,5 +1,5 @@
 // get, update, delete, create
-const Product = require('../models/product');
+const ProductService = require('../service/product.service');
 
 const deleteValidator = (action) => (action.deletedCount > 0 ? 200 : 404);
 
@@ -8,9 +8,6 @@ const doActionThatMightFailValidation = async (request, response, action) => {
     await action();
   } catch (e) {
     response.sendStatus(
-      // if the code is 11000 or the stack is saying validationerror
-      // or reason is undefined or reason code
-      // is ERR_ASSERTION then send back response code 400 otherwise 500
       e.code === 11000
         || e.stack.includes('ValidationError')
         || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
@@ -20,19 +17,12 @@ const doActionThatMightFailValidation = async (request, response, action) => {
 };
 const GetAllProducts = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    // if this part throws an exception where it doesn't find the object specified o
-    // r something then it will go to the funcion above and evaluate
-    // whether the response should be 4 or 500
-    // request.query is the search query the product types in for the request
-    // '-_id -__v' this ignores a bunch of stuff except for the id
-    // we do not want the await inside the response.json in this controller
-    // we want it in a separate service
-    response.json(await Product.find(request.query).select('-_id -__v'));
+    response.json(await ProductService.getAllProductsService(request.query));
   });
 };
 const GetSingleProduct = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await Product.findOne({ sku: request.params.sku }).select('-_id -__v');
+    const getResult = await ProductService.GetSingleProductService(request.params.sku);
     if (getResult != null) {
       response.json(getResult);
     } else {
@@ -42,20 +32,23 @@ const GetSingleProduct = async (request, response) => {
 };
 const CreateProduct = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    await new Product(request.body).save();
+    await ProductService.CreateSingleProductService(request.body);
     response.sendStatus(201);
   });
 };
 const DeleteAllProducts = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(deleteValidator(await Product.deleteMany(request.query)));
+    response.sendStatus(deleteValidator(await ProductService.DeleteAllProductsService(
+      request.query,
+    )));
   });
 };
+
 const DeleteSingleProduct = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.sendStatus(deleteValidator(await Product.deleteOne({
-      sku: request.params.sku,
-    }))); // repeated
+    response.sendStatus(deleteValidator(await ProductService.DeleteSingleProductService(
+      request.params.sku,
+    )));
   });
 };
 const UpdateProductField = async (request, response) => {
@@ -63,11 +56,7 @@ const UpdateProductField = async (request, response) => {
   const product = request.body;
   delete product.sku;
   await doActionThatMightFailValidation(request, response, async () => {
-    const patchResult = await Product
-      .findOneAndUpdate({ sku }, product, {
-        new: true,
-      })
-      .select('-_id -__v');
+    const patchResult = await ProductService.UpdateProductFieldService(sku, product);
     if (patchResult != null) {
       response.json(patchResult);
     } else {
@@ -75,14 +64,13 @@ const UpdateProductField = async (request, response) => {
     }
   });
 };
+
 const UpdateProductEntity = async (request, response) => {
   const { sku } = request.params;
   const product = request.body;
   product.sku = sku;
   await doActionThatMightFailValidation(request, response, async () => {
-    await Product.findOneAndReplace({ sku }, product, {
-      upsert: true,
-    });
+    await ProductService.UpdateProductEntityService(sku, product);
     response.sendStatus(200);
   });
 };
