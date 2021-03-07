@@ -13,11 +13,15 @@ app.use(BodyParser.json());
 app.use('/products', ProductRoutes);
 app.use('/users', UserRoutes);
 (async () => {
-  await Mongoose.connect(process.env.SERVER_SECRET, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
+  try {
+    await Mongoose.connect(process.env.SERVER_SECRET, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    });
+  } catch (error) {
+    throw Error('While connecting to database.');
+  }
   app.listen(process.env.PORT);
 })();
